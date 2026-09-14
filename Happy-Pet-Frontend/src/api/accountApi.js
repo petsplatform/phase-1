@@ -1,6 +1,5 @@
 import api from "./axios";
-//jhfg----------------hhhhhhjhj
-// shfgh
+
 export const accountApi = {
   getDashboard: async () => {
     const res = await api.get("/customer-panel/dashboard");
