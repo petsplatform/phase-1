@@ -1,0 +1,4 @@
+ALTER TABLE "Product" ADD COLUMN "optionType" TEXT NOT NULL DEFAULT 'size';
+ALTER TABLE "Product" ADD COLUMN "optionLabel" TEXT;
+ALTER TABLE "Product" ADD COLUMN "capacities" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "Product" ADD COLUMN "colorVariants" JSONB;

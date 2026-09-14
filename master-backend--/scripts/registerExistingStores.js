@@ -1,0 +1,89 @@
+require("dotenv").config();
+
+const { masterPrisma } = require("../src/config/db");
+const { encryptSecret } = require("../src/utils/tenantCrypto");
+const { normalizeDomain } = require("../src/utils/domain");
+const { provisionStore } = require("../src/services/storeProvisioning.service");
+
+// Use this instead of tenant:provision:seven when the tenant databases, DB
+// users, and passwords already exist (created manually outside this app).
+// It registers the exact credentials you already created — it never
+// generates its own — so ensureRoleExists() finds a matching role and only
+// grants privileges instead of creating a role with a different password.
+
+function value(name) {
+  return process.env[name];
+}
+
+async function main() {
+  const host = value("TENANT_DB_HOST") || "localhost";
+  const port = Number(value("TENANT_DB_PORT") || 5432);
+  let failed = false;
+
+  for (let index = 1; index <= 7; index += 1) {
+    const name = value(`STORE_${index}_NAME`);
+    const storeKey = value(`STORE_${index}_KEY`) || `STORE_${index}`;
+    const domain = normalizeDomain(value(`STORE_${index}_DOMAIN`));
+    const databaseName = value(`STORE_${index}_DATABASE`);
+    const databaseUser = value(`STORE_${index}_DB_USER`);
+    const databasePassword = value(`STORE_${index}_DB_PASSWORD`);
+
+    if (!name || !domain || !databaseName || !databaseUser || !databasePassword) {
+      console.log(`[register-existing-stores] skipped STORE_${index}; missing name/domain/database/db user/db password`);
+      continue;
+    }
+
+    const slug = storeKey.toLowerCase().replace(/_/g, "-");
+    const store = await masterPrisma.store.upsert({
+      where: { storeKey },
+      update: {
+        name,
+        primaryDomain: domain,
+        databaseName,
+        databaseHost: host,
+        databasePort: port,
+        databaseUser,
+        encryptedDatabasePass: encryptSecret(databasePassword),
+      },
+      create: {
+        name,
+        slug,
+        storeKey,
+        primaryDomain: domain,
+        databaseName,
+        databaseHost: host,
+        databasePort: port,
+        databaseUser,
+        encryptedDatabasePass: encryptSecret(databasePassword),
+        status: "PENDING",
+        domains: { create: [{ domain, isPrimary: true }] },
+      },
+    });
+
+    await masterPrisma.storeDomain.upsert({
+      where: { domain },
+      update: { storeId: store.id, isPrimary: true, isActive: true },
+      create: { storeId: store.id, domain, isPrimary: true },
+    });
+
+    const adminEmail = value(`STORE_${index}_ADMIN_EMAIL`) || `admin${index}@store.local`;
+    const adminPassword = value(`STORE_${index}_ADMIN_PASSWORD`) || "Store@12345";
+
+    try {
+      await provisionStore(null, store.id, { adminEmail, adminPassword, adminName: `${name} Admin` });
+      console.log(`[register-existing-stores] provisioned ${store.storeKey} -> ${store.databaseName}; admin ${adminEmail}`);
+    } catch (error) {
+      failed = true;
+      console.error(`[register-existing-stores] failed ${store.storeKey}: ${error.message}`);
+    }
+  }
+
+  await masterPrisma.$disconnect();
+  if (failed) process.exit(1);
+}
+
+main().catch(async (error) => {
+  console.error(error.message);
+  await masterPrisma.$disconnect();
+  process.exit(1);
+});

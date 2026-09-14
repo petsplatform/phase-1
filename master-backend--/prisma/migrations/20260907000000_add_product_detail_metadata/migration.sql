@@ -1,0 +1,2 @@
+-- Product detail metadata is created by the following migration.
+-- Keep this migration as a no-op so Prisma can deploy the complete history.

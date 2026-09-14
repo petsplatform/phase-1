@@ -1,0 +1,3 @@
+ALTER TABLE "Banner" ADD COLUMN "position" TEXT;
+ALTER TABLE "Banner" ADD COLUMN "startDate" TIMESTAMP(3);
+ALTER TABLE "Banner" ADD COLUMN "endDate" TIMESTAMP(3);

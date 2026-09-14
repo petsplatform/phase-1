@@ -1,0 +1,2 @@
+ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "cartItems" JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "wishlistItems" JSONB NOT NULL DEFAULT '[]'::jsonb;

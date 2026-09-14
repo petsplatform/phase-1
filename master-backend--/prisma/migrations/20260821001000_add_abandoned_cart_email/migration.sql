@@ -1,0 +1,13 @@
+ALTER TABLE "Customer"
+  ADD COLUMN IF NOT EXISTS "abandonedCartEmailSentAt" TIMESTAMP(3),
+  ADD COLUMN IF NOT EXISTS "abandonedCartEmailCartHash" TEXT,
+  ADD COLUMN IF NOT EXISTS "abandonedCartEmailCount" INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE "StoreSettings"
+  ADD COLUMN IF NOT EXISTS "abandonedCartEmailEnabled" BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS "abandonedCartDelayHours" DOUBLE PRECISION NOT NULL DEFAULT 24,
+  ADD COLUMN IF NOT EXISTS "abandonedCartDiscountPercent" DOUBLE PRECISION NOT NULL DEFAULT 10,
+  ADD COLUMN IF NOT EXISTS "abandonedCartMinimumAmount" DOUBLE PRECISION NOT NULL DEFAULT 25,
+  ADD COLUMN IF NOT EXISTS "abandonedCartMaxEmails" INTEGER NOT NULL DEFAULT 2;
+
+CREATE INDEX IF NOT EXISTS "Customer_abandonedCartEmailSentAt_idx" ON "Customer"("abandonedCartEmailSentAt");
