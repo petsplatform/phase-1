@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-white: var(--text-white);
+  --color-text-white-secondary: var(--text-white-secondary);
+
+  --color-background-primary: var(--bg-primary);
+  --color-background-secondary: var(--bg-secondary);
+  --color-background-white: var(--bg-white);
+  --color-footer-background: var(--footer-bg);
+  --color-button-bg-primary: var(--button-bg-primary);
+  --color-button-bg-secondary: var(--button-bg-secondary);
+  --color-button-bg-white: var(--button-bg-white);
+  --color-button-text-primary: var(--button-text-primary);
+  --color-button-text-white: var(--button-text-white);
+  --color-border-light: var(--border-light);
+  --color-border-primary: var(--border-primary);
+  --color-border-dark: var(--border-dark);
+  --color-border-white: var(--border-white);
+  --color-border-white-secondary: var(--border-white-secondary);
+
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+  --radius-3xl: 22px;
+  --radius-4xl: 24px;
+  --radius-5xl: 26px;
+  --radius-6xl: 30px;
+
+  --leading-md: var(--line-height-md);
+  --leading-xl: var(--line-height-xl);
+  --leading-3xl: var(--line-height-3xl);
+
+  --spacing-18: 4.5rem;
+}
+
+@layer base {
+  :root {
+    /* Primary Text Colors */
+    --text-primary: #122a50;
+    --text-secondary: #122a5066;
+    --text-tertiary: #122a50b2;
+    --text-white: #ffffff;
+    --text-white-secondary: #ffffffb2;
+
+    /* Background Colors */
+    --bg-primary: #17345f;
+    --bg-secondary: #f8f1df;
+    --bg-white: #fffdf7;
+    --bg-white-overlay: #ffffff66;
+    --bg-white-secondary: #ffffffb2;
+
+    /* Border Colors */
+    --border-light: #17345f19;
+    --border-primary: #d9aa3d7f;
+    --border-dark: #17345f19;
+    --border-white: #ffffff;
+    --border-white-secondary: #ffffffb2;
+
+    /* Component-Specific Colors */
+    --header-bg: transparent;
+    --footer-bg: #0d1f3d;
+    --button-bg-primary: #17345f;
+    --button-bg-secondary: #f8f1df;
+    --button-bg-white: #ffffff;
+    --button-text-primary: #122a50;
+    --button-text-white: #ffffff;
+
+
+/* theme2 */
+/* :root {
+    --text-primary: #082f32;
+    --text-secondary: #082f3266;
+    --text-tertiary: #082f32b2;
+    --text-white: #ffffff;
+    --text-white-secondary: #ffffffb2;
+
+    --bg-primary: #0b5558;
+    --bg-secondary: #f6f3e9;
+    --bg-white: #fffdf7;
+    --bg-white-overlay: #ffffff66;
+    --bg-white-secondary: #ffffffb2;
+
+    --border-light: #0b555819;
+    --border-primary: #8b98427f;
+    --border-dark: #0b555819;
+    --border-white: #ffffff;
+    --border-white-secondary: #ffffffb2;
+
+    --header-bg: transparent;
+    --footer-bg: #073f43;
+    --button-bg-primary: #0b5558;
+    --button-bg-secondary: #f6f3e9;
+    --button-bg-white: #ffffff;
+    --button-text-primary: #082f32;
+    --button-text-white: #ffffff; */
+
+
+
+    /* Typography Variables */
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 45px;
+    --font-size-4xl: 60px;
+
+    /* Font Weight Variables */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+
+    /* Line Height Variables */
+    --line-height-xs: 16px;
+    --line-height-sm: 18px;
+    --line-height-base: 20px;
+    --line-height-md: 21px;
+    --line-height-lg: 25px;
+    --line-height-xl: 26px;
+    --line-height-2xl: 28px;
+    --line-height-3xl: 31px;
+    --line-height-4xl: 56px;
+    --line-height-5xl: 57px;
+    --line-height-6xl: 75px;
+
+    /* Spacing Variables - Margin */
+    --margin-xs: 4px;
+    --margin-sm: 6px;
+    --margin-md: 8px;
+    --margin-lg: 12px;
+    --margin-xl: 14px;
+    --margin-2xl: 16px;
+    --margin-3xl: 20px;
+    --margin-4xl: 22px;
+    --margin-5xl: 24px;
+    --margin-6xl: 26px;
+    --margin-7xl: 28px;
+    --margin-8xl: 54px;
+    --margin-9xl: 56px;
+    --margin-10xl: 60px;
+    --margin-11xl: 66px;
+    --margin-12xl: 80px;
+    --margin-13xl: 136px;
+    --margin-14xl: 138px;
+    --margin-15xl: 140px;
+    --margin-16xl: 148px;
+    --margin-17xl: 160px;
+    --margin-18xl: 168px;
+    --margin-19xl: 184px;
+    --margin-20xl: 258px;
+    --margin-21xl: 296px;
+    --margin-22xl: 298px;
+    --margin-23xl: 400px;
+    --margin-24xl: 406px;
+
+    /* Spacing Variables - Padding */
+    --padding-xs: 4px;
+    --padding-sm: 8px;
+    --padding-md: 10px;
+    --padding-lg: 12px;
+    --padding-xl: 14px;
+    --padding-2xl: 20px;
+    --padding-3xl: 22px;
+    --padding-4xl: 24px;
+    --padding-5xl: 28px;
+    --padding-6xl: 30px;
+    --padding-7xl: 34px;
+    --padding-8xl: 44px;
+    --padding-9xl: 50px;
+    --padding-10xl: 54px;
+    --padding-11xl: 56px;
+    --padding-12xl: 60px;
+    --padding-13xl: 68px;
+    --padding-14xl: 78px;
+    --padding-15xl: 80px;
+    --padding-16xl: 104px;
+    --padding-17xl: 122px;
+    --padding-18xl: 200px;
+
+    /* Spacing Variables - Gap */
+    --gap-xs: 2px;
+    --gap-sm: 4px;
+    --gap-md: 6px;
+    --gap-lg: 8px;
+    --gap-xl: 10px;
+    --gap-2xl: 12px;
+    --gap-3xl: 14px;
+    --gap-4xl: 16px;
+    --gap-5xl: 18px;
+    --gap-6xl: 20px;
+    --gap-7xl: 22px;
+    --gap-8xl: 24px;
+    --gap-9xl: 26px;
+    --gap-10xl: 28px;
+    --gap-11xl: 30px;
+    --gap-12xl: 32px;
+    --gap-13xl: 60px;
+    --gap-14xl: 62px;
+    --gap-15xl: 64px;
+    --gap-16xl: 80px;
+    --gap-17xl: 84px;
+    --gap-18xl: 86px;
+    --gap-19xl: 142px;
+    --gap-20xl: 160px;
+    --gap-21xl: 212px;
+    --gap-22xl: 274px;
+
+    /* Border Radius Variables */
+    --radius-sm: 5px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 14px;
+    --radius-2xl: 16px;
+    --radius-3xl: 22px;
+    --radius-4xl: 24px;
+    --radius-5xl: 26px;
+    --radius-6xl: 30px;
+
+    /* Border Width Variables */
+    --border-width-sm: 1px;
+
+    /* Layout Width Variables */
+    --width-xs: 10px;
+    --width-sm: 18px;
+    --width-md: 20px;
+    --width-lg: 24px;
+    --width-xl: 44px;
+    --width-2xl: 60px;
+    --width-3xl: 80px;
+    --width-4xl: 286px;
+    --width-5xl: 298px;
+    --width-6xl: 306px;
+    --width-7xl: 430px;
+    --width-8xl: 438px;
+    --width-9xl: 448px;
+    --width-10xl: 652px;
+    --width-container: 1320px;
+    --width-full: 100%;
+    --width-auto: auto;
+  }
+}

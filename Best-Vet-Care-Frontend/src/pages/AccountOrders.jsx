@@ -1,0 +1,233 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import AccountLayout from "../components/account/AccountLayout";
+import { orderApi } from "../api/orderApi";
+import { useToast } from "../context/ToastContext";
+import ReviewModal from "../components/ReviewModal";
+
+const currency = (value) => `$${Number(value || 0).toFixed(2)}`;
+const ORDERS_PER_PAGE = 10;
+const labelShipmentStatus = (status) => String(status || "Pending").replace(/([A-Z])/g, " $1").trim();
+
+const AccountOrders = () => {
+  const { showToast } = useToast();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedItemForReview, setSelectedItemForReview] = useState(null);
+  const [selectedOrderForReview, setSelectedOrderForReview] = useState(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  useEffect(() => {
+    orderApi
+      .getMyOrders()
+      .then((data) => {
+        setOrders(data);
+        setCurrentPage(1);
+      })
+      .catch((error) => showToast(error.response?.data?.message || "Could not load orders", "error"))
+      .finally(() => setLoading(false));
+  }, [showToast]);
+
+  const totalPages = Math.max(1, Math.ceil(orders.length / ORDERS_PER_PAGE));
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * ORDERS_PER_PAGE;
+    return orders.slice(start, start + ORDERS_PER_PAGE);
+  }, [currentPage, orders]);
+  const firstVisibleOrder = orders.length ? (currentPage - 1) * ORDERS_PER_PAGE + 1 : 0;
+  const lastVisibleOrder = Math.min(currentPage * ORDERS_PER_PAGE, orders.length);
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  };
+
+  const handleOpenReviewModal = (order, item) => {
+    setSelectedOrderForReview(order);
+    setSelectedItemForReview(item);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleOrderSupport = (order) => {
+    window.dispatchEvent(new CustomEvent("petcare-open-support", {
+      detail: {
+        source: "ORDER",
+        subject: "Order Issue",
+        orderId: order.id,
+        metadata: {
+          orderStatus: order.orderStatus,
+          paymentStatus: order.paymentStatus,
+        },
+      },
+    }));
+  };
+
+  return (
+    <AccountLayout title="My Orders" description="Review order history, payment status, and delivery progress.">
+      <div className="rounded-2xl border border-[#17345f1a] bg-white shadow-sm">
+        {loading ? (
+          <div className="p-8 text-sm font-bold text-[#122a50b2]">Loading orders...</div>
+        ) : orders.length ? (
+          <>
+            <div className="flex flex-col gap-3 border-b border-[#17345f1a] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-extrabold text-[#122a50]">
+                Showing {firstVisibleOrder}-{lastVisibleOrder} of {orders.length} orders
+              </p>
+              <span className="w-fit rounded-full bg-[#f8f1df] px-3 py-1 text-xs font-extrabold text-[#17345f]">
+                10 per page
+              </span>
+            </div>
+
+            <div className="divide-y divide-[#17345f1a]">
+              {paginatedOrders.map((order) => {
+                const isDelivered = String(order.orderStatus || "").toLowerCase() === "delivered";
+
+                return (
+                  <article key={order.id} className="p-5">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                      <div>
+                        <h2 className="text-lg font-extrabold text-[#122a50]">{order.id}</h2>
+                        <p className="mt-1 text-xs font-semibold text-[#122a50b2]">Placed {new Date(order.orderDate).toLocaleString()}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="rounded-full bg-[#f8f1df] px-3 py-1 text-xs font-extrabold text-[#17345f]">{order.orderStatus}</span>
+                        <span className="rounded-full bg-[#17345f0d] px-3 py-1 text-xs font-extrabold text-[#122a50]">{order.paymentStatus}</span>
+                        {order.shipmentStatus === "OutForDelivery" && (
+                          <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-extrabold text-orange-700">Out For Delivery</span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleOrderSupport(order)}
+                          className="rounded-full border border-[#17345f] px-3 py-1 text-xs font-extrabold text-[#17345f] transition-colors hover:bg-[#17345f] hover:text-white"
+                        >
+                          Need Help?
+                        </button>
+                        <a
+                          href={orderApi.invoiceUrl(order.id)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-full border border-[#d9aa3d] px-3 py-1 text-xs font-extrabold text-[#17345f] transition-colors hover:bg-[#d9aa3d] hover:text-white"
+                        >
+                          Print Invoice
+                        </a>
+                      </div>
+                    </div>
+                    <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+                      <div className="space-y-2">
+                        {(order.items || []).map((item, index) => (
+                          <div key={`${order.id}-${item.productId || item.name}-${index}`} className="flex flex-col gap-2 rounded-xl bg-[#fffdf7] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                            <span className="min-w-0 text-sm font-bold text-[#122a50]">{item.name} x {item.quantity}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="shrink-0 text-left sm:text-right">
+                                <span className="block text-[10px] font-extrabold uppercase tracking-wide text-[#122a50b2]">Price</span>
+                                <span className="block text-sm font-extrabold text-[#17345f]">{currency(item.price * item.quantity)}</span>
+                              </span>
+                              {isDelivered && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenReviewModal(order, item)}
+                                  className="inline-flex items-center gap-1 rounded-lg bg-[#17345f] px-3 py-1.5 text-xs font-extrabold text-white transition-colors hover:bg-[#d9aa3d]"
+                                >
+                                  Add Review
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-left md:text-right">
+                        {Number(order.discount) > 0 && (
+                          <div className="mb-2 space-y-1">
+                            <p className="text-xs font-semibold text-[#122a50b2]">
+                              Subtotal: <span className="font-bold text-[#17345f]">{currency(order.subtotal)}</span>
+                            </p>
+                            <p className="text-xs font-semibold text-green-600">
+                              Discount: -{currency(order.discount)}
+                            </p>
+                          </div>
+                        )}
+                        <p className="text-xs font-bold uppercase text-[#122a50b2]">Total</p>
+                        <p className="mt-1 text-2xl font-extrabold text-[#17345f]">{currency(order.total)}</p>
+                      </div>
+                    </div>
+                    {(order.trackingNumber || order.courierName || (order.shipmentStatus && order.shipmentStatus !== "Pending")) && (
+                      <div className="mt-4 rounded-xl border border-[#17345f1a] bg-[#fffdf7] p-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="grid gap-2 text-sm font-semibold text-[#122a50] sm:grid-cols-2 lg:grid-cols-4">
+                            <span><strong>Courier:</strong> {order.courierName || "N/A"}</span>
+                            <span><strong>Tracking:</strong> {order.trackingNumber || "N/A"}</span>
+                            <span><strong>Status:</strong> {labelShipmentStatus(order.shipmentStatus)}</span>
+                            <span><strong>Estimated:</strong> {order.estimatedDeliveryDate ? new Date(order.estimatedDeliveryDate).toLocaleDateString() : "N/A"}</span>
+                          </div>
+                          {order.trackingUrl ? (
+                            <a href={order.trackingUrl} target="_blank" rel="noreferrer" className="w-fit rounded-lg bg-[#17345f] px-4 py-2 text-xs font-extrabold text-white hover:bg-[#d9aa3d]">
+                              Track Shipment
+                            </a>
+                          ) : (
+                            <Link to={`/account/orders/${order.id}/tracking`} className="w-fit rounded-lg bg-[#17345f] px-4 py-2 text-xs font-extrabold text-white hover:bg-[#d9aa3d]">
+                              Track Shipment
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex flex-col gap-3 border-t border-[#17345f1a] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="rounded-lg border border-[#17345f1a] px-4 py-2 text-sm font-extrabold text-[#17345f] transition-colors hover:bg-[#f8f1df] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {Array.from({ length: totalPages }).map((_, index) => {
+                    const page = index + 1;
+                    return (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() => goToPage(page)}
+                        className={`h-9 min-w-9 rounded-lg px-3 text-sm font-extrabold transition-colors ${
+                          currentPage === page
+                            ? "bg-[#17345f] text-white"
+                            : "border border-[#17345f1a] text-[#17345f] hover:bg-[#f8f1df]"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="rounded-lg border border-[#17345f1a] px-4 py-2 text-sm font-extrabold text-[#17345f] transition-colors hover:bg-[#f8f1df] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="p-10 text-center text-sm font-semibold text-[#122a50b2]">No orders found.</div>
+        )}
+      </div>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        product={selectedItemForReview}
+        orderId={selectedOrderForReview?.id}
+      />
+    </AccountLayout>
+  );
+};
+
+export default AccountOrders;
