@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 import { productApi } from "../../api/productApi";
-//jhfu
 const layoutClasses = [
   "lg:col-span-7 h-[320px]",
   "lg:col-span-5 h-[320px]",
