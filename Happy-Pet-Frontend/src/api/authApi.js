@@ -3,7 +3,7 @@ import { CUSTOMER_SESSION_KEY, CUSTOMER_USER_KEY } from "./axios";
 
 const AUTH_CHANGE_EVENT = "happypetrx-auth-change";
 
-//fhgjh
+//fhgjh-----------------
 
 const storeCustomerSession = (token, customer) => {
   localStorage.setItem(CUSTOMER_SESSION_KEY, JSON.stringify({ token, customer }));
