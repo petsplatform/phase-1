@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="Product image placeholder">
+  <rect width="640" height="640" rx="56" fill="#f1f5f9"/>
+  <circle cx="320" cy="252" r="88" fill="#eaf8ea"/>
+  <path d="M250 250c0-38 31-69 70-69s70 31 70 69v121c0 39-31 70-70 70s-70-31-70-70V250Z" fill="#ffffff" stroke="#58b947" stroke-width="18"/>
+  <path d="M250 308h140" stroke="#0f2d52" stroke-width="18" stroke-linecap="round"/>
+  <path d="M320 212v78" stroke="#58b947" stroke-width="18" stroke-linecap="round"/>
+  <text x="320" y="512" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="32" font-weight="800" fill="#0f2d52">PetMedsDirect</text>
+</svg>

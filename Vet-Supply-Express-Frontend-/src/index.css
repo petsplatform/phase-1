@@ -1,0 +1,481 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0874C9;
+  --color-navy: #0B2D4F;
+  --color-orange: #F28C18;
+  --color-lightblue: #EAF5FC;
+  --color-bg-gray: #F7FAFC;
+  --color-text-dark: #102A43;
+  --color-text-muted: #627D98;
+  --color-border-light: #D9E8F2;
+
+  /* Custom Redesigned Brand Colors */
+  --color-brand-navy: #073B66;
+  --color-brand-medblue: #087BC1;
+  --color-brand-brightblue: #18A9E5;
+  --color-brand-orange: #F28A16;
+  --color-brand-soft-blue: #EBF5FB;
+  --color-brand-accent-glow: rgba(24, 169, 229, 0.15);
+
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-manrope: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Custom Utilities and Animations */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--color-bg-gray);
+    color: var(--color-text-dark);
+  }
+
+  /* Custom Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F1F5F9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+}
+
+/* Custom Glassmorphism effect */
+.glass-header {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(217, 232, 242, 0.6);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(217, 232, 242, 0.5);
+}
+
+/* Continuous scrolling animation for announcement bar */
+@keyframes scroll-text {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-scroll-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: scroll-text 45s linear infinite;
+}
+
+.animate-scroll-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Custom hover underline effect for links */
+.nav-link-underline {
+  position: relative;
+}
+
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--color-primary);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.nav-link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.nav-link-underline-active::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(1);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--color-primary);
+}
+
+/* Custom floating animation for decorative cards */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Redesigned Clinic Hero Frame — Modern Shield Blob Shape */
+.clinic-arched-frame {
+  border-radius: 60% 40% 55% 45% / 55% 45% 55% 45%;
+}
+
+.clinic-arched-frame-outer {
+  border-radius: 62% 42% 57% 47% / 57% 47% 57% 47%;
+}
+
+/* Entrance Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomInSubtle {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-zoom-in {
+  animation: zoomInSubtle 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Delay modifiers */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* Responsive container wrapper */
+.container-custom {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  max-width: 1400px;
+}
+
+/* Custom Micro-Animations for Interactive Elements */
+@keyframes scale-up {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-scale-up {
+  animation: scale-up 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Rich Content Typography for HTML from API (h1, h2, bold, lists, tables) ── */
+.variant-rich-content,
+.variant-rich-text,
+.rich-content-display,
+.product-rich-content {
+  color: #102A43 !important;
+  line-height: 1.75 !important;
+  font-size: 0.9375rem !important;
+  font-family: var(--font-sans) !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.variant-rich-content > *:first-child,
+.variant-rich-text > *:first-child,
+.rich-content-display > *:first-child,
+.product-rich-content > *:first-child {
+  margin-top: 0 !important;
+}
+
+.variant-rich-content > *:last-child,
+.variant-rich-text > *:last-child,
+.rich-content-display > *:last-child,
+.product-rich-content > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+.variant-rich-content h1,
+.variant-rich-text h1,
+.rich-content-display h1,
+.product-rich-content h1 {
+  font-family: var(--font-heading) !important;
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  color: #073B66 !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 0.875rem !important;
+  line-height: 1.3 !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 2px solid #D9E8F2 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.variant-rich-content h2,
+.variant-rich-text h2,
+.rich-content-display h2,
+.product-rich-content h2 {
+  font-family: var(--font-heading) !important;
+  font-size: 1.375rem !important;
+  font-weight: 800 !important;
+  color: #073B66 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.variant-rich-content h3,
+.variant-rich-text h3,
+.rich-content-display h3,
+.product-rich-content h3 {
+  font-family: var(--font-heading) !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #073B66 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.4 !important;
+}
+
+.variant-rich-content h4,
+.variant-rich-text h4,
+.rich-content-display h4,
+.product-rich-content h4 {
+  font-family: var(--font-heading) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #073B66 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.variant-rich-content p,
+.variant-rich-text p,
+.rich-content-display p,
+.product-rich-content p {
+  font-family: var(--font-sans) !important;
+  font-size: 0.9375rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.875rem !important;
+  line-height: 1.75 !important;
+  color: #334e68 !important;
+}
+
+.variant-rich-content strong,
+.variant-rich-content b,
+.variant-rich-text strong,
+.variant-rich-text b,
+.rich-content-display strong,
+.rich-content-display b,
+.product-rich-content strong,
+.product-rich-content b {
+  font-weight: 800 !important;
+  color: #073B66 !important;
+}
+
+.variant-rich-content ul,
+.variant-rich-text ul,
+.rich-content-display ul,
+.product-rich-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.variant-rich-content ol,
+.variant-rich-text ol,
+.rich-content-display ol,
+.product-rich-content ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.variant-rich-content li,
+.variant-rich-text li,
+.rich-content-display li,
+.product-rich-content li {
+  font-family: var(--font-sans) !important;
+  margin-top: 0.375rem !important;
+  margin-bottom: 0.375rem !important;
+  line-height: 1.65 !important;
+  color: #334e68 !important;
+}
+
+.variant-rich-content li::marker,
+.variant-rich-text li::marker,
+.rich-content-display li::marker,
+.product-rich-content li::marker {
+  color: #0874C9 !important;
+  font-weight: bold !important;
+}
+
+.rich-table-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  border-radius: 0.875rem !important;
+  border: 1px solid #D9E8F2 !important;
+  box-shadow: 0 1px 3px rgba(16, 42, 67, 0.05) !important;
+  background-color: #ffffff !important;
+}
+
+.variant-rich-content table,
+.variant-rich-text table,
+.rich-content-display table,
+.product-rich-content table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  border: none !important;
+  text-align: left !important;
+}
+
+.variant-rich-content th,
+.variant-rich-text th,
+.rich-content-display th,
+.product-rich-content th {
+  background-color: #F0F7FD !important;
+  color: #073B66 !important;
+  font-weight: 800 !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.875rem 1.25rem !important;
+  text-align: left !important;
+  border-bottom: 2px solid #D9E8F2 !important;
+  border-right: 1px solid #E2EEF6 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.variant-rich-content th:last-child,
+.product-rich-content th:last-child {
+  border-right: none !important;
+}
+
+.variant-rich-content td,
+.variant-rich-text td,
+.rich-content-display td,
+.product-rich-content td {
+  padding: 0.875rem 1.25rem !important;
+  font-size: 0.875rem !important;
+  overflow-wrap: anywhere !important;
+  color: #334e68 !important;
+  border-bottom: 1px solid #EBF3F8 !important;
+  border-right: 1px solid #F0F7FD !important;
+}
+
+.variant-rich-content td:last-child,
+.product-rich-content td:last-child {
+  border-right: none !important;
+}
+
+.variant-rich-content tr:nth-child(even) td,
+.product-rich-content tr:nth-child(even) td {
+  background-color: #FAFDFE !important;
+}
+
+.variant-rich-content tr:hover td,
+.product-rich-content tr:hover td {
+  background-color: #F4F9FD !important;
+}
+
+.variant-rich-content blockquote,
+.variant-rich-text blockquote,
+.rich-content-display blockquote,
+.product-rich-content blockquote {
+  border-left: 4px solid #0874C9 !important;
+  background: rgba(234, 245, 252, 0.6) !important;
+  padding: 0.75rem 1.25rem !important;
+  margin: 1rem 0 !important;
+  border-radius: 0 0.75rem 0.75rem 0 !important;
+  font-style: italic !important;
+  color: #334e68 !important;
+}
+

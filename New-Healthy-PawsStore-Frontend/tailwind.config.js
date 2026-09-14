@@ -1,0 +1,43 @@
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: "var(--color-primary)",
+        primaryDark: "var(--color-primary-dark)",
+        secondary: "var(--color-secondary)",
+        secondaryDark: "var(--color-secondary-dark)",
+        secondaryLight: "var(--color-secondary-light)",
+        sage: "var(--color-sage)",
+        sageLight: "var(--color-sage-light)",
+        orange: "var(--color-orange)",
+        red: "var(--color-red)",
+        error: "var(--color-error)",
+        success: "var(--color-success)",
+        cream: "var(--color-cream)",
+        softCream: "var(--color-soft-cream)",
+        background: "var(--color-background)",
+        iconBg: "var(--color-icon-bg)",
+        white: "var(--color-white)",
+        textMain: "var(--color-text)",
+        muted: "var(--color-muted)",
+        borderSoft: "var(--color-border)",
+        card: "var(--color-card)",
+        star: "var(--color-star)",
+        brandRed: "var(--color-brand-red)",
+        brandPurple: "var(--color-brand-purple)",
+        brandBlue: "var(--color-brand-blue)",
+        brandTeal: "var(--color-brand-teal)",
+      },
+      fontFamily: {
+        display: ['"Baloo 2"', "Nunito", "sans-serif"],
+        body: ["Nunito", "Inter", "sans-serif"],
+      },
+      boxShadow: {
+        soft: "0 12px 30px var(--shadow-soft)",
+        card: "0 8px 22px var(--shadow-card)",
+        contact: "0 18px 45px var(--color-shadow)",
+      },
+    },
+  },
+};

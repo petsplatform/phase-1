@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="Banner image placeholder">
+  <rect width="1200" height="600" rx="56" fill="#eef8fb"/>
+  <circle cx="900" cy="160" r="190" fill="#eaf8ea"/>
+  <circle cx="270" cy="440" r="170" fill="#d8f2f6"/>
+  <path d="M465 330c0-79 64-143 143-143s143 64 143 143-64 143-143 143-143-64-143-143Z" fill="#ffffff" stroke="#58b947" stroke-width="20"/>
+  <path d="M544 330h128M608 266v128" stroke="#0f2d52" stroke-width="24" stroke-linecap="round"/>
+  <text x="600" y="535" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="42" font-weight="800" fill="#0f2d52">Image unavailable</text>
+</svg>

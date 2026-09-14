@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-label="Category image placeholder">
+  <rect width="640" height="640" rx="96" fill="#eaf8ea"/>
+  <circle cx="240" cy="250" r="42" fill="#58b947"/>
+  <circle cx="400" cy="250" r="42" fill="#58b947"/>
+  <circle cx="292" cy="186" r="36" fill="#58b947"/>
+  <circle cx="348" cy="186" r="36" fill="#58b947"/>
+  <path d="M205 384c0-68 52-121 115-121s115 53 115 121c0 48-35 78-78 54-20-11-54-11-74 0-43 24-78-6-78-54Z" fill="#0f2d52"/>
+  <text x="320" y="522" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="32" font-weight="800" fill="#0f2d52">Category</text>
+</svg>
