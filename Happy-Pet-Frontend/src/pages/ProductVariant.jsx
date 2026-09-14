@@ -138,6 +138,84 @@ const WEIGHT_VARIANTS_CATS = [
   },
 ];
 
+const detailFieldMap = {
+  shipping: [
+    "shipping",
+    "shippingInfo",
+    "shippingInformation",
+    "shippingDescription",
+    "shippingPolicy",
+  ],
+  returns: [
+    "returns",
+    "return",
+    "returnsInfo",
+    "returnInfo",
+    "returnsPolicy",
+    "returnPolicy",
+    "refundPolicy",
+  ],
+};
+
+const isPresent = (value) => value !== undefined && value !== null && value !== "";
+
+const splitDetailText = (value) =>
+  String(value)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const normalizeDetailContent = (value) => {
+  if (!isPresent(value)) return [];
+  if (Array.isArray(value)) return value.flatMap(normalizeDetailContent);
+
+  if (typeof value === "object") {
+    const textValue = value.text ?? value.description ?? value.content ?? value.value ?? value.message;
+    if (isPresent(textValue)) {
+      return splitDetailText(textValue).map((text) => ({
+        title: value.title || value.label || value.name,
+        text,
+      }));
+    }
+    return Object.entries(value)
+      .filter(([, itemValue]) => isPresent(itemValue))
+      .flatMap(([key, itemValue]) =>
+        normalizeDetailContent(itemValue).map((line) => ({
+          ...line,
+          title: line.title || key.replace(/([A-Z])/g, " $1").replace(/[_-]+/g, " "),
+        })),
+      );
+  }
+
+  return splitDetailText(value).map((text) => ({ text }));
+};
+
+function DetailRows({ items, emptyLabel }) {
+  if (!items.length) {
+    return (
+      <p className="text-sm text-brand-brown/70 leading-relaxed font-medium">
+        {emptyLabel} information is not available for this product.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-3.5 mt-4 text-xs font-semibold text-brand-brown/75">
+      {items.map((item, idx) => (
+        <div key={`${item.title || "detail"}-${idx}`} className="flex items-start gap-2.5 bg-[#FAF8FF] p-3.5 rounded-xl border border-[#f0ebf8]">
+          <span className="w-4 h-4 rounded-full bg-brand-purple/5 text-[#a855f7] flex items-center justify-center shrink-0 mt-0.5">
+            <Check className="w-2.5 h-2.5" />
+          </span>
+          <span>
+            {item.title && <span className="text-brand-purple font-extrabold">{item.title}: </span>}
+            {item.text}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ProductVariant() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -147,12 +225,14 @@ export default function ProductVariant() {
 
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [reviewsList, setReviewsList] = useState([]);
   const [reviewStats, setReviewStats] = useState({
     avgRating: "4.7",
     totalReviews: 2061,
   });
 
-  const [activeTab, setActiveTab] = useState("all");
+  const variantFilterTab = "all";
+  const [activeDetailsTab, setActiveDetailsTab] = useState("description");
   const [quantities, setQuantities] = useState({});
   const [addingState, setAddingState] = useState({});
 
@@ -167,6 +247,7 @@ export default function ProductVariant() {
       .then((data) => {
         if (!isMounted) return;
         const list = Array.isArray(data) ? data : [];
+        setReviewsList(list);
         if (list.length > 0) {
           const total = list.length;
           const avg = (
@@ -621,9 +702,9 @@ export default function ProductVariant() {
   };
 
   const displayedGroups = useMemo(() => {
-    if (activeTab === "all") return variantGroups;
-    return variantGroups.filter((g) => g.id === activeTab);
-  }, [variantGroups, activeTab]);
+    if (variantFilterTab === "all") return variantGroups;
+    return variantGroups.filter((g) => g.id === variantFilterTab);
+  }, [variantGroups, variantFilterTab]);
 
   if (isLoading) {
     return (
@@ -663,6 +744,16 @@ export default function ProductVariant() {
 
   const prodName = product.name || product.title || "Product";
   const categoryName = product.categoryName || product.category || "Pet Care";
+  const reviewCount = reviewsList.length || Number(product.reviewCount ?? 0);
+  const averageRating = reviewsList.length
+    ? reviewsList.reduce((sum, review) => sum + Number(review.rating ?? review.star ?? review.stars ?? 0), 0) / reviewsList.length
+    : Number(product.averageRating ?? reviewStats.avgRating ?? 0);
+  const shippingDetails = normalizeDetailContent(
+    detailFieldMap.shipping.map((field) => product[field]).find(isPresent),
+  );
+  const returnDetails = normalizeDetailContent(
+    detailFieldMap.returns.map((field) => product[field]).find(isPresent),
+  );
 
   return (
     <div
@@ -1071,17 +1162,79 @@ export default function ProductVariant() {
             </Link>
           </div>
 
+          <div className="border-b border-[#f0ebf8] bg-[#FAF8FF] px-5 sm:px-8 flex overflow-x-auto scrollbar-none">
+            {[
+              { id: "description", label: "Description" },
+              { id: "shipping", label: "Shipping" },
+              { id: "returns", label: "Returns" },
+              { id: "reviews", label: `Reviews (${reviewCount})` },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveDetailsTab(tab.id)}
+                className={`py-3.5 sm:py-4 px-4 sm:px-6 font-bold text-xs sm:text-sm transition-all border-b-2 cursor-pointer outline-none whitespace-nowrap ${
+                  activeDetailsTab === tab.id
+                    ? "border-brand-purple text-brand-purple bg-white"
+                    : "border-transparent text-brand-brown/60 hover:text-brand-purple hover:bg-[#fcfaff]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           <div className="p-5 sm:p-8">
-            {richHtmlContent ? (
-              <div
-                className="variant-rich-text text-[#374151] text-sm sm:text-base leading-relaxed overflow-x-auto"
-                dangerouslySetInnerHTML={{ __html: richHtmlContent }}
-              />
-            ) : (
-              <p className="text-sm text-brand-brown/70 font-medium">
-                Detailed product specifications and administration instructions
-                are not currently available for this item.
-              </p>
+            {activeDetailsTab === "description" && (
+              richHtmlContent ? (
+                <div className="variant-rich-text text-[#374151] text-sm sm:text-base leading-relaxed overflow-x-auto" dangerouslySetInnerHTML={{ __html: richHtmlContent }} />
+              ) : (
+                <p className="text-sm text-brand-brown/70 font-medium">Detailed product specifications and administration instructions are not currently available for this item.</p>
+              )
+            )}
+
+            {activeDetailsTab === "shipping" && (
+              <div className="space-y-6 max-w-2xl">
+                <h3 className="text-lg font-extrabold text-brand-purple flex items-center gap-2"><Truck className="w-5 h-5" /> Shipping &amp; Delivery</h3>
+                <DetailRows items={shippingDetails} emptyLabel="Shipping" />
+              </div>
+            )}
+
+            {activeDetailsTab === "returns" && (
+              <div className="space-y-6 max-w-2xl">
+                <h3 className="text-lg font-extrabold text-brand-purple flex items-center gap-2"><ShieldCheck className="w-5 h-5" /> Easy Returns &amp; Refunds</h3>
+                <DetailRows items={returnDetails} emptyLabel="Returns" />
+              </div>
+            )}
+
+            {activeDetailsTab === "reviews" && (
+              <div className="space-y-6">
+                <div className="bg-[#FAF8FF] border border-[#f0ebf8] rounded-2xl p-5 flex items-center gap-4">
+                  <div className="text-center bg-white px-5 py-3 rounded-2xl border border-brand-purple/10 shadow-sm">
+                    <span className="text-3xl font-extrabold text-brand-purple">{reviewCount ? averageRating.toFixed(1) : "0.0"}</span>
+                    <p className="text-[10px] font-bold text-brand-brown/60 mt-0.5">out of 5</p>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1 mb-1">
+                      {[1, 2, 3, 4, 5].map((star) => <Star key={star} className={`w-4 h-4 ${star <= Math.round(averageRating) ? "fill-amber-400 text-amber-400" : "text-gray-300"}`} />)}
+                    </div>
+                    <p className="text-xs font-bold text-brand-purple">Based on {reviewCount} customer reviews</p>
+                  </div>
+                </div>
+                {reviewsList.length === 0 ? (
+                  <div className="text-center py-10 border border-dashed border-brand-purple/10 rounded-2xl bg-white"><p className="text-xs font-semibold text-brand-brown/70">No customer reviews yet for this product.</p></div>
+                ) : (
+                  <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2 scrollbar-none">
+                    {reviewsList.map((review) => (
+                      <div key={review.id || review._id || review.author} className="border border-gray-100 p-5 rounded-2xl bg-white shadow-xs space-y-2 text-left">
+                        <div className="flex items-center justify-between gap-3"><h5 className="text-xs font-extrabold text-brand-purple">{review.author || review.name || "Customer"}</h5><span className="text-[10px] font-bold text-brand-brown/50">{review.date || review.createdAt || "Recent"}</span></div>
+                        <div className="flex items-center gap-1">{[1, 2, 3, 4, 5].map((star) => <Star key={star} className={`w-3.5 h-3.5 ${star <= Number(review.rating || 5) ? "fill-amber-400 text-amber-400" : "text-gray-200"}`} />)}</div>
+                        <p className="text-xs font-medium text-brand-brown/75 leading-relaxed">{review.comment || review.text || review.review}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

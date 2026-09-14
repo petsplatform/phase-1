@@ -26,7 +26,7 @@ import {
   lacksVetAccess,
   isFamilyProduct,
 } from "../utils/productUtils";
-import { formatProductRichContent } from "../utils/htmlUtils";
+import ProductTabs from "../components/ProductDetails/ProductTabs";
 
 function getColorHex(colorName, fallback = "#8a72c7") {
   if (!colorName) return fallback;
@@ -137,15 +137,6 @@ export default function ProductVariantPage({
         : null) ||
       ""
     );
-  }, [product]);
-
-  const richHtmlContent = useMemo(() => {
-    const parentContent =
-      product?.productDetails?.content ||
-      product?.content ||
-      product?.parentContent ||
-      "";
-    return formatProductRichContent(parentContent, product);
   }, [product]);
 
   // Build variant groups matching clean style
@@ -891,36 +882,7 @@ export default function ProductVariantPage({
         </div>
 
         {/* ── PRODUCT CONTENT & SPECIFICATIONS ── */}
-        {richHtmlContent ? (
-          <div className="mt-8 mb-6 bg-white border border-[#e7ddd0] rounded-3xl overflow-hidden shadow-2xs">
-            <div className="px-6 sm:px-8 py-4 bg-[#fbf9f6] border-b border-[#eee4d6] flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-on-background">
-                  Product Overview &amp; Specifications
-                </h3>
-                <p className="text-xs font-semibold text-charcoal-text mt-0.5">
-                  Detailed formulation guides, indications, and administration
-                  directions
-                </p>
-              </div>
-              <Link
-                to={`/shop/product/${product.id}`}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-white hover:bg-secondary bg-secondary/10 px-3 py-1.5 rounded-xl border border-secondary/20 transition-all"
-                title="View on product details page"
-              >
-                <span>Full Details Page</span>
-                <ArrowRight size={13} />
-              </Link>
-            </div>
-
-            <div className="p-6 sm:p-8">
-              <div
-                className="variant-rich-text text-[#374151] text-sm sm:text-base leading-relaxed overflow-x-auto"
-                dangerouslySetInnerHTML={{ __html: richHtmlContent }}
-              />
-            </div>
-          </div>
-        ) : null}
+        <ProductTabs product={product} />
       </div>
     </main>
   );
